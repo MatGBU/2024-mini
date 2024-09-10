@@ -12,10 +12,10 @@ ADC2 = 28
 led = machine.Pin("LED", machine.Pin.OUT)
 adc = machine.ADC(ADC2)
 
-blink_period = 0.1
+blink_period = 0.05
 
-max_bright = 20000
-min_bright = 10000
+max_bright = 30000
+min_bright = 0
 
 
 def clip(value: float) -> float:
@@ -26,6 +26,7 @@ def clip(value: float) -> float:
         return 1
     return value
 
+print("test")
 
 while True:
     value = adc.read_u16()
@@ -36,7 +37,7 @@ while True:
     So we use function clip()
     """
 
-    duty_cycle = clip((value - min_bright) / (max_bright - min_bright))
+    duty_cycle = clip((max_bright - value) / (max_bright - min_bright))
 
     led.high()
     time.sleep(blink_period * duty_cycle)
