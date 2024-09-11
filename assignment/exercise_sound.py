@@ -16,8 +16,8 @@ speaker = machine.PWM(machine.Pin(SPEAKER_PIN))
 
 # Define notes (frequencies in Hz)
 notes = {
-    'C4': 261, 'D4': 294, 'E4': 329, 'F4': 349, 'G4': 392, 'A4': 440, 'B4': 493,
-    'C5': 523, 'D5': 587, 'E5': 659, 'F5': 698, 'G5': 784, 'A5': 880, 'B5': 987
+    'C4': 261, 'D4': 294, 'E4': 329, 'F4': 349, 'G4': 392, 'A4': 440, 'B4': 493, # type: ignore
+    'C5': 523, 'D5': 587, 'E5': 659, 'F5': 698, 'G5': 784, 'A5': 880, 'B5': 987 # type: ignore
 }
 #notes given by chatgpt
 

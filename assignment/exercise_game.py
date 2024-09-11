@@ -59,6 +59,11 @@ def scorer(t: list[int | None]) -> None:
     # is in range [0..1]
     data = {}
 
+
+
+    min_score = min(t) # type: ignore #reads array and stores smallest value
+    max_score = max(t) # type: ignore #reads array and stores largest value
+
     # %% make dynamic filename and write JSON
 
     now: tuple[int] = time.localtime()
@@ -68,6 +73,9 @@ def scorer(t: list[int | None]) -> None:
 
     print("write", filename)
 
+    print("Fastest response time: " + str(min_score)) #prints minimum value of data
+    print("Slowest response time: " + str(max_score)) #prints maximum value of data
+
     write_json(filename, data)
 
 
@@ -75,7 +83,7 @@ if __name__ == "__main__":
     # using "if __name__" allows us to reuse functions in other script files
 
     led = Pin("LED", Pin.OUT)
-    button = Pin(16, Pin.IN, Pin.PULL_UP)
+    button = Pin(15, Pin.IN, Pin.PULL_UP)
 
     t: list[int | None] = []
 
