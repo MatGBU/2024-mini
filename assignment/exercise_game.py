@@ -7,11 +7,10 @@ import time
 import random
 import json
 
-
-N: int = 3
+N: int = 10 #change this number to 3 to save time for testing
 sample_ms = 10.0
 on_ms = 500
-
+t_new = []
 
 def random_time_interval(tmin: float, tmax: float) -> float:
     """return a random time interval between max and min"""
@@ -59,11 +58,17 @@ def scorer(t: list[int | None]) -> None:
     # is in range [0..1]
     data = {}
 
+    
+    t_new = [i for i in t if i is not None] #removes "none" from list so we can calculate min, max and avg
 
+    if len(t_new) != 0:  #if t_new is NOT empty do the calulations 
+        min_score = min(t_new) # type: ignore #reads array and stores smallest value
+        max_score = max(t_new) # type: ignore #reads array and stores largest value
+        average = sum(t_new)/len(t_new) #type: ignore #sum of array over lenght of array
+        average = round(average) #rounds the average to an integer
+   
 
-    min_score = min(t) # type: ignore #reads array and stores smallest value
-    max_score = max(t) # type: ignore #reads array and stores largest value
-
+    
     # %% make dynamic filename and write JSON
 
     now: tuple[int] = time.localtime()
@@ -73,8 +78,12 @@ def scorer(t: list[int | None]) -> None:
 
     print("write", filename)
 
-    print("Fastest response time: " + str(min_score)) #prints minimum value of data
-    print("Slowest response time: " + str(max_score)) #prints maximum value of data
+    if len(t_new) == 0: #if t_new is empty print one thing else print the other thing
+     print('You missed every click!')
+    else:
+        print("Fastest response time: " + str(min_score)) #prints minimum value of data
+        print("Slowest response time: " + str(max_score)) #prints maximum value of data
+        print("Average response time: " + str(average)) #prints average response time
 
     write_json(filename, data)
 
