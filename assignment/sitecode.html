@@ -5,6 +5,25 @@
 		<button id="login-btn">Login with Google</button>
 		<button id="logout-btn">Logout</button>
 
+
+    <h1>User Scores</h1>
+    <!-- table used to display user scores  -->
+    <table id="scores-table" border="1">
+      <thead>
+        <tr>
+          <th>Game ID</th>
+          <th>Min Score</th>
+          <th>Max Score</th>
+          <th>Average Score</th>
+          <th>Final Score</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+
+
 		<script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
@@ -16,7 +35,7 @@
   // Your web app's Firebase configuration
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
-	 //sensitive info
+		//sensitive info 
   };
 
   // Initialize Firebase
@@ -38,6 +57,7 @@
 
 	loginBtn.addEventListener("click", () => {
 				signInWithPopup(auth, provider)
+				// code below used to debug
 					.then((result) => {
 						const user = result.user;
 						console.log("Logged in as:", user.displayName);
@@ -50,6 +70,7 @@
 		//handles logout
 	logoutBtn.addEventListener("click", () => {
 			signOut(auth)
+			// code below used to debug
 				.then(() => {
 					console.log("User logged out");
 					})
@@ -67,24 +88,55 @@
 					}
 	});
 
-		//retrieves the data that is connected to the user (by their UID)
-  auth.onAuthStateChanged((user) => {
-      if (user) {
-        const uid = user.uid;
-        console.log(user.uid); //testing purposes only
-        const userRef = ref(db, 'users/' + uid); //not implemented yet - unsure if it works
+  function renderTable(data) {
+       const tableBody = document.getElementById('scores-table').getElementsByTagName('tbody')[0];
+       tableBody.innerHTML = ''; // clears any existing table rows (in case the same user has >1 UID)
 
-        get(userRef).then((snapshot) => {
-          if (snapshot.exists()) {
-            console.log(snapshot.val());
-          } else {
-            console.log("No data available");
-          }
-        }).catch((error) => { //this catch portion is from raspberry pi documentation
-          console.error('Error fetching data:', error);
-        });
-      }
-    });
+       // iterates over fetched data, produces rows
+       for (const [date, scores] of Object.entries(data)) {
+         const row = tableBody.insertRow();
+
+         // insert date/game ID -> unsure about what to call this column
+         const dateCell = row.insertCell(0);
+         dateCell.textContent = date; //chatgpt used here to learn the proper functions
+
+         // insert scores using same method as date
+         const minCell = row.insertCell(1);
+         const maxCell = row.insertCell(2);
+         const avgCell = row.insertCell(3);
+         const finalScoreCell = row.insertCell(4);
+         minCell.textContent = scores.min;
+         maxCell.textContent = scores.max;
+         avgCell.textContent = scores.average;
+         finalScoreCell.textContent = scores.score;
+
+       }
+     }
+
+    //retrieves the data that is connected to the user (by their UID)
+    auth.onAuthStateChanged((user) => {
+          if (user) {
+            const uid = user.uid;
+            const userRef = ref(db, 'UID/' + uid); // uses proper path to fetch user data
+
+            // via db connection, get user data
+            get(userRef).then((snapshot) => {
+              if (snapshot.exists()) {
+                const userData = snapshot.val(); // retrieve image of data
+                renderTable(userData);  // form into a table on webpage
+              } else {
+                console.log('No data available');
+              }
+            }).catch((error) => {
+              console.error('Error fetching data:', error);
+          });
+        } else {
+					//clears the table when user logs out - for (theoretical) safety/consistency reasons
+          console.log('User has signed out - Clearing table');
+          const tableBody = document.getElementById('scores-table').getElementsByTagName('tbody')[0];
+          tableBody.innerHTML = '';  //
+        }
+      });
 
 </script>
 	</body>

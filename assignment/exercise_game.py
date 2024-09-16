@@ -44,8 +44,8 @@ def write_json(json_filename: str, data: dict) -> None:
     with open(json_filename, "w") as f:
         json.dump(data, f)
 
-def sender(data: dict, json_filename: str) -> None:
-    url = "https://mini-mt-default-rtdb.firebaseio.com/" + json_filename
+def sender(data: dict, json_filename: str, UID: str) -> None:
+    url = "https://mini-mt-default-rtdb.firebaseio.com/UID/" + UID + "/" + json_filename
     response = urequests.put(url, json=data)
     print(response.status_code)
     
@@ -77,11 +77,7 @@ def scorer(t: list[int | None]) -> None:
     # add key, value to this dict to store the minimum, maximum, average response time
     # and score (non-misses / total flashes) i.e. the score a floating point number
     # is in range [0..1]
-    data = { "Data": {'min': min_score,
-            'max': max_score,
-            'average': average,
-            'score': (N-misses)/N}
-            }
+    
     
     # %% make dynamic filename and write JSON
 
@@ -100,7 +96,8 @@ def scorer(t: list[int | None]) -> None:
         print("Slowest response time: " + str(max_score)) #prints maximum value of data
         print("Average response time: " + str(average)) #prints average response time
     
-    sender(data, filename)
+    exUID = "qN9nGtRMvVdXcqmQpCmdLRrJlkv1";
+    sender(data, filename, exUID)
     #write_json(filename, data)
     
 
