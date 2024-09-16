@@ -6,8 +6,9 @@ from machine import Pin
 import time
 import random
 import json
+import urequests
 
-N: int = 10 #change this number to 3 to save time for testing
+N: int = 3 #change this number to 3 to save time for testing
 sample_ms = 10.0
 on_ms = 500
 t_new = []
@@ -43,20 +44,26 @@ def write_json(json_filename: str, data: dict) -> None:
     with open(json_filename, "w") as f:
         json.dump(data, f)
 
+def sender(data: dict, json_filename: str) -> None:
+    url = "https://mini-mt-default-rtdb.firebaseio.com/" + json_filename
+    response = urequests.put(url, json=data)
+    print(response.status_code)
+    
+    response.close()
+    
 
 def scorer(t: list[int | None]) -> None:
     # %% collate results
+    min_score = 0
+    max_score = 0
+    average = 0
+    
     misses = t.count(None)
     print(f"You missed the light {misses} / {len(t)} times")
 
     t_good = [x for x in t if x is not None]
 
-    print(t_good)
-
-    # add key, value to this dict to store the minimum, maximum, average response time
-    # and score (non-misses / total flashes) i.e. the score a floating point number
-    # is in range [0..1]
-    data = {}
+    #print(t_good)
 
     
     t_new = [i for i in t if i is not None] #removes "none" from list so we can calculate min, max and avg
@@ -67,7 +74,14 @@ def scorer(t: list[int | None]) -> None:
         average = sum(t_new)/len(t_new) #type: ignore #sum of array over lenght of array
         average = round(average) #rounds the average to an integer
    
-
+    # add key, value to this dict to store the minimum, maximum, average response time
+    # and score (non-misses / total flashes) i.e. the score a floating point number
+    # is in range [0..1]
+    data = { "Data": {'min': min_score,
+            'max': max_score,
+            'average': average,
+            'score': (N-misses)/N}
+            }
     
     # %% make dynamic filename and write JSON
 
@@ -76,7 +90,8 @@ def scorer(t: list[int | None]) -> None:
     now_str = "-".join(map(str, now[:3])) + "T" + "_".join(map(str, now[3:6]))
     filename = f"score-{now_str}.json"
 
-    print("write", filename)
+    #print("write", filename)
+    #print(data)
 
     if len(t_new) == 0: #if t_new is empty print one thing else print the other thing
      print('You missed every click!')
@@ -84,9 +99,10 @@ def scorer(t: list[int | None]) -> None:
         print("Fastest response time: " + str(min_score)) #prints minimum value of data
         print("Slowest response time: " + str(max_score)) #prints maximum value of data
         print("Average response time: " + str(average)) #prints average response time
-
-    write_json(filename, data)
-
+    
+    sender(data, filename)
+    #write_json(filename, data)
+    
 
 if __name__ == "__main__":
     # using "if __name__" allows us to reuse functions in other script files
