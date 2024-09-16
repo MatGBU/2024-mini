@@ -8,7 +8,7 @@ import random
 import json
 import urequests
 
-N: int = 3 #change this number to 3 to save time for testing
+N: int = 10 #change this number to 3 to save time for testing
 sample_ms = 10.0
 on_ms = 500
 t_new = []
