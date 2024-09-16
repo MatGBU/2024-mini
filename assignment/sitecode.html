@@ -3,8 +3,7 @@
 	<body>
 		<!--set up google login buttons-->
 		<button id="login-btn">Login with Google</button>
-		<button id="logout-btn" style="display:none;">Logout</button>
-
+		<button id="logout-btn">Logout</button>
 
 		<script type="module">
   // Import the functions you need from the SDKs you need
@@ -17,7 +16,7 @@
   // Your web app's Firebase configuration
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
-    //sensitive information
+	 //sensitive info
   };
 
   // Initialize Firebase
@@ -28,13 +27,64 @@
 	const auth = getAuth(app);
 	const provider = new GoogleAuthProvider();
 
-	import {getDatabase, get, ref, child} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-databse.js";
+	import {getDatabase, get, ref, child} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 	//get references for buttons
 	const loginBtn = document.getElementById("login-btn");
 	const logoutBtn = document.getElementById("logout-btn");
 
 	const db = getDatabase();
 
+	//function loggingIn() //DELETED because can be performed without full declaration
+
+	loginBtn.addEventListener("click", () => {
+				signInWithPopup(auth, provider)
+					.then((result) => {
+						const user = result.user;
+						console.log("Logged in as:", user.displayName);
+					})
+					.catch((error) => {
+						console.error("Error during login:", error);
+					});
+			});
+
+		//handles logout
+	logoutBtn.addEventListener("click", () => {
+			signOut(auth)
+				.then(() => {
+					console.log("User logged out");
+					})
+				.catch((error) => {
+					console.error("Error during logout:", error);
+				});
+			});
+
+    //way of checking for user login w/ web console
+	onAuthStateChanged(auth, (user) => {
+					if (user) {
+						console.log("User is logged in:", user.displayName);
+					} else {
+						console.log("No user is logged in");
+					}
+	});
+
+		//retrieves the data that is connected to the user (by their UID)
+  auth.onAuthStateChanged((user) => {
+      if (user) {
+        const uid = user.uid;
+        console.log(user.uid); //testing purposes only
+        const userRef = ref(db, 'users/' + uid); //not implemented yet - unsure if it works
+
+        get(userRef).then((snapshot) => {
+          if (snapshot.exists()) {
+            console.log(snapshot.val());
+          } else {
+            console.log("No data available");
+          }
+        }).catch((error) => { //this catch portion is from raspberry pi documentation
+          console.error('Error fetching data:', error);
+        });
+      }
+    });
 
 </script>
 	</body>
