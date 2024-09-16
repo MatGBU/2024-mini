@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<!--set up google login buttons-->
+		<button id="login-btn">Login with Google</button>
+		<button id="logout-btn" style="display:none;">Logout</button>
+
+
+		<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+	import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    //sensitive information
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+	//initialize firebase auth apps
+	const auth = getAuth(app);
+	const provider = new GoogleAuthProvider();
+
+	import {getDatabase, get, ref, child} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-databse.js";
+	//get references for buttons
+	const loginBtn = document.getElementById("login-btn");
+	const logoutBtn = document.getElementById("logout-btn");
+
+	const db = getDatabase();
+
+
+</script>
+	</body>
+</html>
