@@ -11,6 +11,6 @@ Exercise 3
 Q: Edit the exercise_game.py code to compute average, minimum, maximum response time for 10 flashes total.
     A:Check exercise_game
 Q: Upload the response time data to a cloud service of your choice.
-    A:Check sitecode.html
+    A:Check the wiki on github : https://github.com/MatGBU/2024-mini/wiki
 Design decisions for Cloud portion:
 
